@@ -1,6 +1,12 @@
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from types import TracebackType
-from typing import Self
+from typing import Self, TypeAlias
+
+from src.domain.repositories.capture_task_repository import (
+    CaptureTaskRepository,
+)
+from src.domain.repositories.plan_repository import PlanRepository
 
 
 class UnitOfWork(ABC):
@@ -29,3 +35,13 @@ class UnitOfWork(ABC):
     async def rollback(self) -> None:
         """Rollback the current transaction."""
         pass
+
+
+class ExecutionUOW(UnitOfWork):
+    """Unit of Work for plan execution operations."""
+
+    plans: PlanRepository
+    tasks: CaptureTaskRepository
+
+
+ExecutionUOWFactory: TypeAlias = Callable[[], ExecutionUOW]
