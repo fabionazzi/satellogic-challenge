@@ -142,3 +142,7 @@ class Satellite:
     @property
     def has_pending_tasks(self) -> bool:
         return len(self._pending_targets) > 0
+
+    @property
+    def pending_targets(self) -> list[CaptureTarget]:
+        return list(self._pending_targets)

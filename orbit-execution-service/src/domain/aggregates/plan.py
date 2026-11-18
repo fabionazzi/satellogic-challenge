@@ -27,9 +27,9 @@ class Plan:
 
     plan_uuid: UUID
     status: PlanStatus
-    started_at: datetime | None
-    completed_at: datetime | None
     plan_id: int | None = None
+    started_at: datetime | None = None
+    completed_at: datetime | None = None
 
     @classmethod
     def create(
@@ -50,3 +50,6 @@ class Plan:
     def complete(self):
         self._transition_to(PlanStatus.COMPLETED)
         self.completed_at = datetime.now(UTC)
+
+    def is_pending(self) -> bool:
+        return self.status == PlanStatus.PENDING
