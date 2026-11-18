@@ -25,6 +25,16 @@ class Settings(BaseSettings):
 
     constellation_filepath: FilePath
 
+    simulation_tick_seconds: float = 0.01
+
+    rabbitmq_host: str
+    rabbitmq_port: int = 5672
+    rabbitmq_user: str
+    rabbitmq_password: SecretStr
+    rabbitmq_vhost: str = "/"
+    rabbitmq_exchange: str = "orbit.events"
+    rabbitmq_publish_timeout_seconds: float = 5.0
+
     @property
     def database_url(self) -> URL:
         return URL.create(

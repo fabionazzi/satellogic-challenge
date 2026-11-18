@@ -1,8 +1,12 @@
 from abc import ABC, abstractmethod
 
+from src.application.events import SimulationEvent
+
 
 class EventPublisher(ABC):
-    """Abstract class for event publishers"""
+    """Port for simulation event publishers"""
 
     @abstractmethod
-    async def publish(self, message) -> None: ...
+    async def publish(self, event: SimulationEvent) -> None:
+        """Publish an event."""
+        pass
