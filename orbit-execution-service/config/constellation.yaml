@@ -13,7 +13,7 @@ satellites:
     angular_velocity: 1
     capture_tolerance: 2
     slew_distance: 15
-    failure_probability: 0.2
+    failure_probability: 0.35
     random_seed: "sat-beta"
   - id: 3
     name: "sat-gamma"
