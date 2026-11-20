@@ -1,5 +1,7 @@
+name: orbit-execution
+
 services:
-  app:
+  orbit-app:
     container_name: orbit-execution-service
     image: orbit-execution-service:latest
     build:
@@ -11,20 +13,18 @@ services:
       - ../src:/app/src
       - ../env:/app/env
       - ../config:/app/config
-    environment:
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
     ports:
       - "${APP_PORT:-8081}:8080"
     depends_on:
-      mysql:
+      orbit-mysql:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+    networks:
+      - default
+      - inter-service
 
-  mysql:
+  orbit-mysql:
     image: mysql:8.4
     container_name: orbit-mysql
     restart: unless-stopped
@@ -66,6 +66,9 @@ services:
       - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - default
+      - inter-service
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 10s
@@ -75,3 +78,8 @@ services:
 volumes:
   mysql-data:
   rabbitmq-data:
+
+networks:
+  inter-service:
+    external: true
+    name: satellogic
