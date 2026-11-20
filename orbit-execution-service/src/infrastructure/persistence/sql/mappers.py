@@ -69,6 +69,7 @@ class CaptureTaskMapper:
             plan_id=model.plan_id,
             request_id=model.request_id,
             satellite_id=model.satellite_id,
+            satellite_name=model.satellite_name,
             target_theta=model.target_theta,
             status=model.status,
             attempts=[
@@ -82,6 +83,7 @@ class CaptureTaskMapper:
             plan_id=task.plan_id,
             request_id=task.request_id,
             satellite_id=task.satellite_id,
+            satellite_name=task.satellite_name,
             target_theta=task.target_theta,
             status=task.status,
             attempts=[

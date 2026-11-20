@@ -62,6 +62,7 @@ class CaptureTask:
     plan_id: int
     request_id: str
     satellite_id: int
+    satellite_name: str
     target_theta: float
     status: CaptureTaskStatus
     attempts: list[CaptureAttempt]
@@ -71,9 +72,10 @@ class CaptureTask:
     def create(
         cls,
         plan_id: int,
-        request_id,
-        satellite_id,
-        target_theta,
+        request_id: str,
+        satellite_id: int,
+        satellite_name: str,
+        target_theta: float,
     ) -> "CaptureTask":
         if not 0 <= target_theta < 360:
             raise InvalidThetaError
@@ -81,6 +83,7 @@ class CaptureTask:
             plan_id=plan_id,
             request_id=request_id,
             satellite_id=satellite_id,
+            satellite_name=satellite_name,
             target_theta=target_theta,
             status=CaptureTaskStatus.PENDING,
             attempts=list(),

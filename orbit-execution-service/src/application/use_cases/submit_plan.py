@@ -43,6 +43,7 @@ class SubmitPlanUseCase:
                     CaptureTask.create(
                         plan_id=plan.plan_id,
                         request_id=task.request_id,
+                        satellite_name=assignment.satellite_name,
                         satellite_id=assignment.satellite_id,
                         target_theta=task.target_theta,
                     )

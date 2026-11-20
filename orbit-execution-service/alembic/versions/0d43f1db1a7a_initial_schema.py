@@ -1,8 +1,8 @@
 """Initial schema
 
-Revision ID: 12bf203edca0
+Revision ID: 0d43f1db1a7a
 Revises: 
-Create Date: 2026-11-18 12:05:08.070367
+Create Date: 2026-11-19 20:05:27.643619
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '12bf203edca0'
+revision: str = '0d43f1db1a7a'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -39,6 +39,7 @@ def upgrade() -> None:
     sa.Column('plan_id', sa.Integer(), nullable=False),
     sa.Column('request_id', sa.String(length=64), nullable=False),
     sa.Column('satellite_id', sa.Integer(), nullable=False),
+    sa.Column('satellite_name', sa.String(length=64), nullable=False),
     sa.Column('target_theta', sa.Double(), nullable=False),
     sa.Column('status', sa.Enum('PENDING', 'IN_PROGRESS', 'SUCCEEDED', 'FAILED', name='capture_task_status'), nullable=False),
     sa.CheckConstraint('target_theta >= 0 AND target_theta < 360', name='check_target_theta_range'),

@@ -104,6 +104,7 @@ class SQLCaptureTask(SQLBase):
     )
     request_id: Mapped[str] = mapped_column(String(64), nullable=False)
     satellite_id: Mapped[int] = mapped_column(nullable=False)
+    satellite_name: Mapped[str] = mapped_column(String(64), nullable=False)
     target_theta: Mapped[float] = mapped_column(nullable=False)
     status: Mapped[CaptureTaskStatus] = mapped_column(
         SAEnum(

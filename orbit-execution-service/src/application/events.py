@@ -21,7 +21,7 @@ class EventFactory:
         return SimulationEvent(
             name=f"plan.{plan.status.value.lower()}",
             payload={
-                "plan_id": str(plan.plan_uuid),
+                "plan_uuid": str(plan.plan_uuid),
                 "status": plan.status.value,
             },
         )
@@ -31,13 +31,12 @@ class EventFactory:
         plan: Plan, task: CaptureTask, attempt: CaptureAttempt
     ) -> SimulationEvent:
         return SimulationEvent(
-            name=f"task.{task.status.value.lower()}",
+            name="task.attempt",
             payload={
-                "plan_id": str(plan.plan_uuid),
+                "plan_uuid": str(plan.plan_uuid),
                 "request_id": task.request_id,
-                "satellite_id": task.satellite_id,
-                "status": task.status.value,
                 "attempt": {
+                    "satellite_name": task.satellite_name,
                     "status": attempt.status.value,
                     "reason": attempt.reason,
                     "attempted_at": attempt.attempted_at.isoformat(),
@@ -53,9 +52,8 @@ class EventFactory:
         return SimulationEvent(
             name=f"task.{task.status.value.lower()}",
             payload={
-                "plan_id": str(plan.plan_uuid),
+                "plan_uuid": str(plan.plan_uuid),
                 "request_id": task.request_id,
-                "satellite_id": task.satellite_id,
                 "status": task.status.value,
             },
         )
