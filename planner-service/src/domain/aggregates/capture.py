@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 from src.domain.capture_status import CaptureStatus
 from src.domain.entities.capture_attempt import (
@@ -12,12 +13,21 @@ from src.domain.exceptions import (
 )
 
 ALLOWED_TRANSITIONS = {
-    CaptureStatus.QUEUED: [CaptureStatus.SCHEDULED, CaptureStatus.REJECTED],
-    CaptureStatus.SCHEDULED: [CaptureStatus.IN_PROGRESS],
-    CaptureStatus.IN_PROGRESS: [CaptureStatus.SUCCEEDED, CaptureStatus.FAILED],
-    CaptureStatus.REJECTED: [],
-    CaptureStatus.SUCCEEDED: [],
-    CaptureStatus.FAILED: [],
+    CaptureStatus.QUEUED: {CaptureStatus.SCHEDULED, CaptureStatus.REJECTED},
+    CaptureStatus.SCHEDULED: {
+        CaptureStatus.IN_PROGRESS,
+        CaptureStatus.QUEUED,
+        CaptureStatus.FAILED,
+    },
+    CaptureStatus.IN_PROGRESS: {CaptureStatus.SUCCEEDED, CaptureStatus.FAILED},
+    CaptureStatus.REJECTED: set(),
+    CaptureStatus.SUCCEEDED: set(),
+    CaptureStatus.FAILED: set(),
+}
+
+ATTEMPT_TO_CAPTURE_STATUS = {
+    CaptureAttemptStatus.SUCCEEDED: CaptureStatus.SUCCEEDED,
+    CaptureAttemptStatus.FAILED: CaptureStatus.FAILED,
 }
 
 
@@ -62,9 +72,6 @@ class Capture:
             and self.priority == other.priority
         )
 
-    def has_same_request_id(self, other: "Capture") -> bool:
-        return self.request_id == other.request_id
-
     def transition_to(self, status: CaptureStatus) -> None:
         """Transition the capture to a new status."""
         if status not in ALLOWED_TRANSITIONS[self.status]:
@@ -73,37 +80,43 @@ class Capture:
             )
         self.status = status
 
-    def add_attempt(self, attempt: CaptureAttempt) -> None:
-        """Add a capture attempt to the capture."""
-        if self.status not in [CaptureStatus.SCHEDULED]:
-            raise StatusTransitionError(
-                f"Cannot add attempt when capture is in {self.status} status"
-            )
-        attempt_status = attempt.status
-        match attempt_status:
-            case CaptureAttemptStatus.IN_PROGRESS:
-                self.transition_to(CaptureStatus.IN_PROGRESS)
-            case CaptureAttemptStatus.SUCCEEDED:
-                self.transition_to(CaptureStatus.SUCCEEDED)
-            case CaptureAttemptStatus.FAILED:
-                self.transition_to(CaptureStatus.FAILED)
-            case _:
-                raise StatusTransitionError(
-                    f"Invalid attempt status {attempt_status}"
-                )
-        self.attempts.append(attempt)
+    def requeue(self) -> None:
+        """Return a scheduled capture to the queue"""
+        self.transition_to(CaptureStatus.QUEUED)
 
-    def update_attempt(
-        self, attempt_id: int, status: CaptureAttemptStatus
+    def record_attempt(
+        self,
+        status: CaptureAttemptStatus,
+        satellite: str,
+        theta: float,
+        at: datetime,
+        reason: str | None = None,
     ) -> None:
-        """Update the status of a capture attempt."""
-        attempt = next(
-            (a for a in self.attempts if a.attempt_id == attempt_id), None
+        """Register new attempt."""
+        self.transition_to(ATTEMPT_TO_CAPTURE_STATUS[status])
+        self.attempts.append(
+            CaptureAttempt(
+                status=status,
+                assigned_satellite=satellite,
+                attempted_at_theta=theta,
+                attempted_at=at,
+                reason=reason,
+            )
         )
-        if not attempt:
-            raise ValueError(f"Attempt with id {attempt_id} not found")
-        attempt.status = status
-        self.add_attempt(attempt)
+
+    def start(self):
+        """Change status to IN_PROGRESS"""
+        self.transition_to(CaptureStatus.IN_PROGRESS)
+
+    def fail(self):
+        """Mark capture as failed"""
+        self.transition_to(CaptureStatus.FAILED)
+
+    def not_completed(self) -> bool:
+        return self.status in {
+            CaptureStatus.SCHEDULED,
+            CaptureStatus.IN_PROGRESS,
+        }
 
     @property
     def last_attempt(self) -> CaptureAttempt | None:

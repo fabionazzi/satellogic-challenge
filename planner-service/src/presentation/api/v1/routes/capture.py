@@ -1,6 +1,10 @@
 from fastapi import APIRouter, HTTPException, status
-from src.application.exceptions import ExcutionInProgressException
-from src.domain.exceptions import RequestIdAlreadyExistsError
+
+from src.application.exceptions import ExecutionInProgressException
+from src.domain.exceptions import (
+    CaptureNotFoundError,
+    RequestIdAlreadyExistsError,
+)
 from src.presentation.api.v1.dependencies.capture import (
     CreateCaptureUC,
     GetCaptureUC,
@@ -12,6 +16,10 @@ from src.presentation.api.v1.schemas import (
 )
 
 router = APIRouter()
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @router.post(
@@ -36,7 +44,7 @@ async def create_capture(
     try:
         capture = await use_case.execute(request.to_command())
         return CaptureCreateResponse.from_domain(capture)
-    except ExcutionInProgressException:
+    except ExecutionInProgressException:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Execution in progress",
@@ -46,7 +54,8 @@ async def create_capture(
             status_code=status.HTTP_409_CONFLICT,
             detail="Capture with the same request_id already exists",
         )
-    except Exception:
+    except Exception as exc:
+        logger.exception(exc)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid input data",
@@ -54,21 +63,21 @@ async def create_capture(
 
 
 @router.get(
-    "/{capture_id}",
-    summary="Get capture by ID",
-    description="Retrieve a capture by its ID.",
+    "/{request_id}",
+    summary="Get capture by request ID",
+    description="Retrieve a capture by its request ID.",
     response_model=CaptureResponse,
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_404_NOT_FOUND: {"description": "Capture not found"},
     },
 )
-async def get_capture(capture_id: str, use_case: GetCaptureUC):
+async def get_capture(request_id: str, use_case: GetCaptureUC):
     try:
-        capture = await use_case.execute(capture_id)
+        capture = await use_case.execute(request_id)
         return CaptureResponse.from_domain(capture)
-    except ValueError:
+    except CaptureNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Capture with ID {capture_id} not found.",
+            detail="Capture not found.",
         )

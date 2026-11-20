@@ -1,6 +1,7 @@
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, Request
+
 from src.application.unit_of_work import CaptureUOW
 from src.application.use_cases.capture import (
     CreateCaptureUseCase,
@@ -9,23 +10,20 @@ from src.application.use_cases.capture import (
 from src.infrastructure.persistence.sql.unit_of_work import (
     SQLCaptureUnitOfWork,
 )
-from src.presentation.api.v1.dependencies.common import SessionDep
 
 
-def get_capture_uow(session: SessionDep) -> CaptureUOW:
-    return SQLCaptureUnitOfWork(session)
+def get_capture_uow(request: Request) -> CaptureUOW:
+    return SQLCaptureUnitOfWork(request.app.state.sessionmaker)
 
 
 CaptureUOWDep = Annotated[CaptureUOW, Depends(get_capture_uow)]
 
 
-def get_create_capture_use_case(
-    uow: CaptureUOWDep, exec_svc
-) -> CreateCaptureUseCase:
-    return CreateCaptureUseCase(uow, exec_svc)
+def get_create_capture_use_case(uow: CaptureUOWDep) -> CreateCaptureUseCase:
+    return CreateCaptureUseCase(uow)
 
 
-def get_get_capture_use_case(uow):
+def get_get_capture_use_case(uow: CaptureUOWDep) -> GetCaptureUseCase:
     return GetCaptureUseCase(uow)
 
 

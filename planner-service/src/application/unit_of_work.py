@@ -2,7 +2,11 @@ from abc import ABC, abstractmethod
 from types import TracebackType
 from typing import Self
 
-from src.domain.repositories import CaptureRepository
+from src.domain.repositories import (
+    CaptureRepository,
+    PlannerLockRepository,
+    PlanRepository,
+)
 
 
 class UnitOfWork(ABC):
@@ -37,3 +41,5 @@ class CaptureUOW(UnitOfWork):
     """Unit of Work for capture operations."""
 
     capture_repository: CaptureRepository
+    plan_repository: PlanRepository
+    planner_lock: PlannerLockRepository

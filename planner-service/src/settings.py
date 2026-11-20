@@ -23,6 +23,18 @@ class Settings(BaseSettings):
     mysql_password: SecretStr
     mysql_database: str
 
+    rabbitmq_host: str
+    rabbitmq_port: int = 5672
+    rabbitmq_user: str
+    rabbitmq_password: SecretStr
+    rabbitmq_vhost: str = "/"
+    rabbitmq_exchange: str = "orbit.events"
+    rabbitmq_status_queue: str = "planner.execution-status"
+    rabbitmq_prefetch: int = 10
+    rabbitmq_delivery_limit: int = 5
+
+    base_orbit_execution_url: str
+
     @property
     def database_url(self) -> URL:
         return URL.create(

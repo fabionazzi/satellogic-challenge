@@ -15,6 +15,5 @@ class CaptureStatus(str, Enum):
 class CaptureAttemptStatus(str, Enum):
     """Capture attempt status for the orbit execution service."""
 
-    IN_PROGRESS = "IN_PROGRESS"
     SUCCEEDED = "SUCCEEDED"
     FAILED = "FAILED"

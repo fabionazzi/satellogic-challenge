@@ -1,8 +1,11 @@
 from datetime import datetime
+from uuid import UUID
 
 from pydantic import BaseModel, Field
+
 from src.application.dto import CreateCaptureCommand
 from src.domain.aggregates.capture import Capture, CaptureStatus
+from src.domain.aggregates.plan import Plan, PlanStatus
 
 
 class CreateCaptureRequest(BaseModel):
@@ -63,4 +66,20 @@ class CaptureResponse(BaseModel):
             status=capture.status,
             assigned_satellite=assigned_satellite,
             execution_details=execution_details,
+        )
+
+
+class SimulationResponse(BaseModel):
+    """Response model for a dispatched simulation."""
+
+    plan_uuid: UUID
+    status: PlanStatus
+    scheduled_captures: int
+
+    @classmethod
+    def from_domain(cls, plan: Plan) -> "SimulationResponse":
+        return cls(
+            plan_uuid=plan.plan_uuid,
+            status=plan.status,
+            scheduled_captures=len(plan.capture_ids),
         )

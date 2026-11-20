@@ -16,3 +16,7 @@ class RequestIdAlreadyExistsError(Exception):
 
 class CaptureNotFoundError(Exception):
     """Raised when a capture with the specified ID is not found."""
+
+
+class NotPersistedError(Exception):
+    """Raised when try to access a non-persisted entity"""

@@ -8,8 +8,9 @@ from src.domain.capture_status import CaptureAttemptStatus
 class CaptureAttempt:
     """Capture attempt entity for the orbit execution service."""
 
-    attempt_id: int
     status: CaptureAttemptStatus
     assigned_satellite: str
     attempted_at_theta: float
     attempted_at: datetime
+    attempt_id: int | None = None
+    reason: str | None = None
