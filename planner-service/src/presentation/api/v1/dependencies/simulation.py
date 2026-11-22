@@ -6,7 +6,7 @@ from src.application.ports.orbit_execution_engine import (
     OrbitExecutionService,
 )
 from src.application.use_cases.simulation import DispatchSimulationUseCase
-from src.domain.services.scheduler import MockScheduler, Scheduler
+from src.domain.services.scheduler import ExhaustiveScheduler, Scheduler
 from src.presentation.api.v1.dependencies.capture import CaptureUOWDep
 
 
@@ -15,7 +15,7 @@ def get_orbit_service(request: Request) -> OrbitExecutionService:
 
 
 def get_scheduler() -> Scheduler:
-    return MockScheduler()
+    return ExhaustiveScheduler()
 
 
 OrbitServiceDep = Annotated[OrbitExecutionService, Depends(get_orbit_service)]
