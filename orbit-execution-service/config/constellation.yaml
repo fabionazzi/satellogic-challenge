@@ -9,17 +9,17 @@ satellites:
     random_seed: "sat-alpha"
   - id: 2
     name: "sat-beta"
-    initial_position: 0
+    initial_position: 180
     angular_velocity: 1
     capture_tolerance: 2
     slew_distance: 15
     failure_probability: 0.35
     random_seed: "sat-beta"
-  - id: 3
-    name: "sat-gamma"
-    initial_position: 0
-    angular_velocity: 1
-    capture_tolerance: 2
-    slew_distance: 15
-    failure_probability: 0.15
-    random_seed: "sat-gamma"
+  # - id: 3
+  #   name: "sat-gamma"
+  #   initial_position: 240
+  #   angular_velocity: 1
+  #   capture_tolerance: 2
+  #   slew_distance: 15
+  #   failure_probability: 0.15
+  #   random_seed: "sat-gamma"
