@@ -73,5 +73,9 @@ class RabbitMQEventPublisher(EventPublisher):
             timeout=self._publish_timeout,
         )
 
+    @property
+    def is_connected(self) -> bool:
+        return self._connection.connected.is_set()
+
     async def close(self) -> None:
         await self._connection.close()

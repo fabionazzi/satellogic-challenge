@@ -17,6 +17,7 @@ from src.infrastructure.persistence.sql.unit_of_work import (
 from src.infrastructure.persistence.yaml.constellation_repository import (
     YamlConstellationRepository,
 )
+from src.presentation.api.health import router as health_router
 from src.presentation.api.v1.router import router as v1_router
 from src.settings import get_settings
 
@@ -43,6 +44,7 @@ async def lifespan(app: FastAPI):
         )
     )
 
+    app.state.engine = engine
     app.state.uow_factory = uow_factory
     app.state.constellation_repository = constellation_repository
     app.state.publisher = publisher
@@ -57,5 +59,6 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Orbit Execution Service", lifespan=lifespan)
+    app.include_router(health_router)
     app.include_router(v1_router, prefix="/api/v1")
     return app
