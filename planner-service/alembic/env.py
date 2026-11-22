@@ -18,8 +18,17 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from src.infrastructure.persistence.sql.models import SQLBase
+from src.settings import get_settings
 
 target_metadata = SQLBase.metadata
+
+# Build the URL from the same settings the app uses (env vars / env/.env),
+# swapping the async driver for a sync one. "%" is escaped for configparser.
+_url = get_settings().database_url.set(drivername="mysql+pymysql")
+config.set_main_option(
+    "sqlalchemy.url",
+    _url.render_as_string(hide_password=False).replace("%", "%%"),
+)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
