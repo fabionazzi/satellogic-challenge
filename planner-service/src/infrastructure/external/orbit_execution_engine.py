@@ -21,7 +21,6 @@ class HTTPOrbitExecutionService(OrbitExecutionService):
     PLANS_ENDPOINT = "plans/{plan_uuid}"
 
     def __init__(self, client: httpx.AsyncClient) -> None:
-        # TODO: Create with base URL and timeout
         self._client = client
 
     async def dispatch(
