@@ -4,23 +4,13 @@ CHART       := infra/kubernetes/helm/satellogic
 NAMESPACE   := satellogic
 IMAGE_TAG   := local
 SERVICES    := planner-service orbit-execution-service
-APPS        := deployment/orbit-app deployment/planner-app deployment/planner-worker
 SVC         ?= planner-app
 
-.PHONY: up infra-up run infra-down check-tools cluster-up images deploy restart lint status logs down demo test
+.PHONY: up infra-up run check-tools cluster-up images status logs down demo test
 
 up: infra-up run
 
-infra-up: check-tools cluster-up images
-
-run:
-	@if helm status $(CLUSTER) -n $(NAMESPACE) >/dev/null 2>&1; then \
-		$(MAKE) --no-print-directory deploy restart; \
-	else \
-		$(MAKE) --no-print-directory deploy; \
-	fi
-
-infra-down: down
+infra-up: images
 
 check-tools:
 	@for tool in docker kind kubectl helm; do \
@@ -37,16 +27,9 @@ images: cluster-up
 		kind load docker-image $$svc:$(IMAGE_TAG) --name $(CLUSTER) || exit 1; \
 	done
 
-deploy: cluster-up
+run: cluster-up
 	helm upgrade --install $(CLUSTER) $(CHART) -n $(NAMESPACE) --create-namespace \
-		--force-conflicts --wait --timeout 5m
-
-restart:
-	kubectl rollout restart $(APPS) -n $(NAMESPACE)
-	kubectl rollout status $(APPS) -n $(NAMESPACE) --timeout 5m
-
-lint:
-	helm lint $(CHART)
+		--set-string rollme=$$(date +%s) --force-conflicts --wait --timeout 5m
 
 status:
 	kubectl get pods,svc -n $(NAMESPACE)

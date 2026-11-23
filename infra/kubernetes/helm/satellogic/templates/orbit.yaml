@@ -84,6 +84,8 @@ spec:
     metadata:
       labels:
         app: orbit-app
+      annotations:
+        rollme: {{ .Values.rollme | quote }}
     spec:
       enableServiceLinks: false
       initContainers:

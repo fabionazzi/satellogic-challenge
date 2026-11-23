@@ -82,6 +82,8 @@ spec:
     metadata:
       labels:
         app: planner-app
+      annotations:
+        rollme: {{ .Values.rollme | quote }}
     spec:
       enableServiceLinks: false
       initContainers:
@@ -143,6 +145,8 @@ spec:
     metadata:
       labels:
         app: planner-worker
+      annotations:
+        rollme: {{ .Values.rollme | quote }}
     spec:
       enableServiceLinks: false
       initContainers:
