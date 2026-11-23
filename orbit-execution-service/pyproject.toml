@@ -1,0 +1,25 @@
+[project]
+name = "orbit-execution-service"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Fabio Nazzi",email = "fabionnazzi@gmail.com"}
+]
+requires-python = ">=3.12,<4"
+dependencies = [
+    "pydantic (>=2.14.3,<3.0.0)",
+    "pydantic-settings (>=2.16.3,<3.0.0)",
+    "uvicorn (>=0.54.0,<0.55.0)",
+    "alembic (>=1.20.1,<2.0.0)",
+    "fastapi (>=0.163.1,<0.164.0)",
+    "sqlalchemy[asyncio] (>=2.1.9,<3.0.0)",
+    "aiomysql (>=0.3.2,<0.4.0)",
+    "pyyaml (>=6.0.3,<7.0.0)",
+    "aio-pika (>=10.2.3,<11.0.0)",
+    "cryptography (>=50.0.2,<51.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

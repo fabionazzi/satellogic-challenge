@@ -1,0 +1,6 @@
+Planner API:         http://localhost:8080/docs
+Orbit Execution API: http://localhost:8081/docs
+RabbitMQ UI:         http://localhost:15672 (user: {{ .Values.rabbitmq.user }})
+
+Status: make status
+Logs:   make logs SVC=planner-app|planner-worker|orbit-app

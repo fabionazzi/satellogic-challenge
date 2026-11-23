@@ -1,0 +1,75 @@
+name: planner
+
+services:
+  planner-app:
+    container_name: planner-service
+    image: planner-service:latest
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    env_file:
+      - ../env/.env
+    volumes:
+      - ../env/:/app/env
+      - ../src:/app/src
+    ports:
+      - 8080:8080
+    depends_on:
+      - planner-mysql
+    networks:
+      - default
+      - inter-service
+
+  planner-worker:
+    container_name: planner-worker
+    image: planner-service:latest
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: ["python", "-m", "src.worker"]
+    env_file:
+      - ../env/.env
+    volumes:
+      - ../src:/app/src
+    depends_on:
+      - planner-mysql
+    networks:
+      - default
+      - inter-service
+
+  planner-mysql:
+    image: mysql:8.4
+    container_name: planner-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-planner}
+      MYSQL_USER: ${MYSQL_USER:-planner}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-planner}
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${MYSQL_ROOT_PASSWORD:-root}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql-data:
+
+networks:
+  inter-service:
+    external: true
+    name: satellogic

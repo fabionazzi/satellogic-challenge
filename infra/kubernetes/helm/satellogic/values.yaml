@@ -1,0 +1,18 @@
+images:
+  orbit: orbit-execution-service:local
+  planner: planner-service:local
+
+rabbitmq:
+  user: orbit
+  password: orbit
+
+orbit:
+  database: orbit_executor
+  user: orbit
+  password: orbit
+
+planner:
+  database: planner
+  user: planner
+  password: planner
+  workerReplicas: 1

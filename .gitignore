@@ -140,7 +140,7 @@ celerybeat.pid
 
 # RabbitMQ
 mnesia/
-rabbitmq/
+# rabbitmq/
 rabbitmq-data/
 
 # ActiveMQ
@@ -153,7 +153,6 @@ activemq-data/
 .env
 .envrc
 .venv
-env/
 venv/
 ENV/
 env.bak/
